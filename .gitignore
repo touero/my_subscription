@@ -1,0 +1,5 @@
+venv
+.venv
+weibo.html
+__pycache__
+.idea
