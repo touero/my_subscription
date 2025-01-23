@@ -1,4 +1,4 @@
-name: Send Email via SMTP
+name: Get Data and Send Email
 
 on:
   schedule:
