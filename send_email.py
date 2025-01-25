@@ -3,6 +3,7 @@ import email.utils
 import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from constants import HOT_FILE
 
 
 def send_email():
@@ -14,7 +15,7 @@ def send_email():
     authorization_code = os.getenv('AUTHORIZATION_CODE')
     sender_name = "NewsBot"
     subject = "微博热搜"
-    filename = "weibo.html"
+    filename = HOT_FILE
     message = MIMEMultipart()
     message['To'] = email.utils.formataddr((receiver_name, receiver_email))
     message['From'] = email.utils.formataddr((sender_name, sender_email))
