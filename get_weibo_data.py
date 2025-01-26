@@ -1,97 +1,70 @@
-import requests
+import asyncio
+import aiohttp
+import aiofiles
 from lxml import html
 
+from constants import TEMPLATE_HTML, HOT_FILE
 
-def get_weibo_data():
+async def fetch_data(url, session):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
         "Referer": "https://tophub.today/"
     }
-    url = "https://tophub.today/n/KqndgxeLl9"
     try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        response.encoding = 'utf-8'
-        tree = html.fromstring(response.text)
-        rows = tree.xpath('//div[@class="cc-dc"][1]//table[@class="table"]//tr')
+        async with session.get(url, headers=headers) as response:
+            response.raise_for_status()
+            response.encoding = 'utf-8'
+            tree = html.fromstring(await response.text())
+            rows = tree.xpath('//div[@class="cc-dc"][1]//table[@class="table"]//tr')
 
-        html_table = """<html>
-<head>
-    <meta charset="UTF-8">
-    <title>微博热搜</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            font-size: 24px
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            text-align: center;
-        }
-        td {
-            font-size: 20px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <h1>TopHub 热点数据</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>序号</th>
-                <th>标题</th>
-                <th>热度</th>
-            </tr>
-        </thead>
-        <tbody>"""
+            table_rows = ""
+            for row in rows:
+                index_element = row.xpath('./td[1]')
+                index = index_element[0].text_content().strip().replace('.', '') if index_element else "N/A"
 
-        for row in rows:
-            index_element = row.xpath('./td[1]')
-            index = index_element[0].text_content().strip().replace('.', '') if index_element else "N/A"
+                title_element = row.xpath('./td[2]/a')
+                if title_element:
+                    title = title_element[0].text_content().strip()
+                    url = title_element[0].get('href', '无链接')
+                    title_with_link = f'<a href="{url}">{title}</a>'
+                else:
+                    title_with_link = "N/A"
 
-            title_element = row.xpath('./td[2]/a')
-            if title_element:
-                title = title_element[0].text_content().strip()
-                url = title_element[0].get('href', '无链接')
-                title_with_link = f'<a href="{url}">{title}</a>'
-            else:
-                title_with_link = "N/A"
+                hot_level_element = row.xpath('./td[3]')
+                hot_level = hot_level_element[0].text_content().strip() if hot_level_element else "N/A"
 
-            hot_level_element = row.xpath('./td[3]')
-            hot_level = hot_level_element[0].text_content().strip() if hot_level_element else "N/A"
+                table_rows += f"""
+                <tr>
+                    <td>{index}</td>
+                    <td>{title_with_link}</td>
+                    <td>{hot_level}</td>
+                </tr>"""
 
-            html_table += f"""
-            <tr>
-                <td>{index}</td>
-                <td>{title_with_link}</td>
-                <td>{hot_level}</td>
-            </tr>"""
+            return table_rows
+    except Exception as e:
+        print(f"Error fetching data from {url}: {e}")
+        return ""
 
-        html_table += """
-        </tbody>
-    </table>
-</body>
-</html>"""
 
-        with open("weibo.html", "w", encoding="utf-8") as file:
-            file.write(html_table)
+async def get_weibo_data():
+    urls = [
+        "https://tophub.today/n/KqndgxeLl9",
+        "https://tophub.today/n/mproPpoq6O",
+    ]
+
+    async with aiohttp.ClientSession() as session:
+        table1_rows, table2_rows = await asyncio.gather(
+            fetch_data(urls[0], session),
+            fetch_data(urls[1], session)
+        )
+
+        async with aiofiles.open(TEMPLATE_HTML, "r", encoding="utf-8") as template_file:
+            html_template = await template_file.read()
+
+        html_content = html_template.replace("{{table1_rows}}", table1_rows)
+        html_content = html_content.replace("{{table2_rows}}", table2_rows)
+
+        async with aiofiles.open(HOT_FILE, "w", encoding="utf-8") as file:
+            await file.write(html_content)
 
         print("HTML表格已生成并写入到weibo.html 文件中！")
-
-    except requests.RequestException as e:
-        print("请求失败：", e)
-    except Exception as e:
-        print("发生错误：", e)
-
-
-
