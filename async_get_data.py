@@ -2,6 +2,7 @@ import asyncio
 import aiohttp
 import aiofiles
 from lxml import html
+from datetime import datetime
 
 from constants import TEMPLATE_HTML, HOT_FILE, Url
 
@@ -58,6 +59,8 @@ async def get_data():
 
         html_content = html_template.replace("{{table1_rows}}", table1_rows)
         html_content = html_content.replace("{{table2_rows}}", table2_rows)
+        create_datetime = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        html_content = html_content.replace("{{create_datetime}}", create_datetime)
 
         async with aiofiles.open(HOT_FILE, "w", encoding="utf-8") as file:
             await file.write(html_content)
