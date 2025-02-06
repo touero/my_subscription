@@ -2,8 +2,9 @@ import asyncio
 import aiohttp
 import aiofiles
 from lxml import html
+from datetime import datetime
 
-from constants import TEMPLATE_HTML, HOT_FILE
+from constants import TEMPLATE_HTML, HOT_FILE, Url
 
 async def fetch_data(url, session):
     headers = {
@@ -46,16 +47,11 @@ async def fetch_data(url, session):
         return ""
 
 
-async def get_weibo_data():
-    urls = [
-        "https://tophub.today/n/KqndgxeLl9",
-        "https://tophub.today/n/mproPpoq6O",
-    ]
-
+async def get_data():
     async with aiohttp.ClientSession() as session:
         table1_rows, table2_rows = await asyncio.gather(
-            fetch_data(urls[0], session),
-            fetch_data(urls[1], session)
+            fetch_data(Url.WeiBo.value, session),
+            fetch_data(Url.Zhihu.value, session)
         )
 
         async with aiofiles.open(TEMPLATE_HTML, "r", encoding="utf-8") as template_file:
@@ -63,8 +59,10 @@ async def get_weibo_data():
 
         html_content = html_template.replace("{{table1_rows}}", table1_rows)
         html_content = html_content.replace("{{table2_rows}}", table2_rows)
+        create_datetime = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        html_content = html_content.replace("{{create_datetime}}", create_datetime)
 
         async with aiofiles.open(HOT_FILE, "w", encoding="utf-8") as file:
             await file.write(html_content)
 
-        print("HTML表格已生成并写入到weibo.html 文件中！")
+        print(f"write html content to {HOT_FILE}")

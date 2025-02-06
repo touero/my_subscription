@@ -1,7 +1,7 @@
 import asyncio
-from get_weibo_data import get_weibo_data
+from async_get_data import get_data
 from send_email import send_email
 
 if __name__ == '__main__':
-    asyncio.run(get_weibo_data())
+    asyncio.run(get_data())
     send_email()
