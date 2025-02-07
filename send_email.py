@@ -13,8 +13,8 @@ def send_email():
     receiver_email = os.getenv('RECEIVER_EMAIL')
     receiver_name = os.getenv('RECEIVER_NAME', 'Receiver Name')
     authorization_code = os.getenv('AUTHORIZATION_CODE')
-    sender_name = "NewsBot"
-    subject = "微博热搜"
+    sender_name = "GithubActionNewsBot"
+    subject = "Hot News"
     filename = HOT_FILE
     message = MIMEMultipart()
     message['To'] = email.utils.formataddr((receiver_name, receiver_email))

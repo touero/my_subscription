@@ -6,7 +6,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 HOT_FILE = os.path.join(BASE_DIR, "hot.html")
 TEMPLATE = os.path.join(BASE_DIR, "template")
 TEMPLATE_HTML = os.path.join(TEMPLATE, "template.html")
-STYLES_CSS = os.path.join(TEMPLATE, "styles.css")
 
 
 @unique
