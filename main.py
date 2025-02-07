@@ -1,6 +1,6 @@
 import asyncio
 from async_get_data import get_data
-from send_email import send_watchers_emails
+from async_send_email import send_watchers_emails
 
 async def main():
     await get_data()

@@ -1,3 +1,5 @@
+from smtplib import SMTPException
+
 import aiohttp
 import smtplib
 import os
@@ -33,14 +35,13 @@ async def fetch_json(url, session):
 
 
 async def get_watchers():
+    emails = []
     url = f"https://api.github.com/repos/{OWNER}/{REPO}/subscribers"
     async with aiohttp.ClientSession() as session:
         watchers = await fetch_json(url, session)
-        if not watchers:
-            print("未获取到 watchers")
-            return []
-        print(watchers)
-        emails = []
+        if not watchers or not isinstance(watchers, list):
+            print(f"未获取到 watchers: {watchers}")
+            return emails
         user_apis = [user_api['url'] for user_api in watchers]
         for user_api in user_apis:
             user = await fetch_json(user_api, session)
@@ -63,17 +64,13 @@ def send_email(receiver):
         with open(HOT_FILE, "r", encoding="utf-8") as file:
             html_content = file.read()
         message.attach(MIMEText(html_content, 'html'))
-    except FileNotFoundError:
-        print("邮件模板文件未找到")
-        return
-
-    try:
         with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
             server.login(SENDER_EMAIL, AUTHORIZATION_CODE)
             server.sendmail(SENDER_EMAIL, [receiver_email], msg=message.as_string())
-            print(f"邮件已发送至 {receiver_email}")
-    except Exception as e:
-        print(f"邮件发送失败: {e}")
+            print(f"邮件已发送给 {receiver_name}")
+    except SMTPException as e:
+        print(f"邮件发送出现异常: {e}")
+
 
 
 async def send_watchers_emails():

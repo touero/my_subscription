@@ -1,6 +1,4 @@
 import asyncio
-import os
-
 import aiohttp
 import aiofiles
 from lxml import html
