@@ -33,11 +33,10 @@ async def fetch_data(url, session):
 
                 hot_level_element = row.xpath('./td[3]')
                 hot_level = hot_level_element[0].text_content().strip() if hot_level_element else "N/A"
-
                 table_rows += f"""
                 <tr>
                     <td>{index}</td>
-                    <td>{title_with_link}</td>
+                    <td><img src="{Url.url_favicon_icon(url)}"> {title_with_link}</td>
                     <td>{hot_level}</td>
                 </tr>"""
 

@@ -12,3 +12,12 @@ TEMPLATE_HTML = os.path.join(TEMPLATE, "template.html")
 class Url(Enum):
     WeiBo = "https://tophub.today/n/KqndgxeLl9"
     Zhihu = "https://tophub.today/n/mproPpoq6O"
+
+    @staticmethod
+    def url_favicon_icon(url):
+        if 'weibo' in url:
+            return "https://weibo.com/favicon.ico"
+        elif 'zhihu' in url:
+            return "https://static.zhihu.com/heifetz/favicon.ico"
+        else:
+            return ''
