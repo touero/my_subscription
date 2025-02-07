@@ -39,6 +39,7 @@ async def get_watchers():
         if not watchers:
             print("未获取到 watchers")
             return []
+        print(watchers)
         emails = []
         user_apis = [user_api['url'] for user_api in watchers]
         for user_api in user_apis:
