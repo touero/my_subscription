@@ -13,8 +13,8 @@ def send_email():
     receiver_email = os.getenv('RECEIVER_EMAIL')
     receiver_name = os.getenv('RECEIVER_NAME', 'Receiver Name')
     authorization_code = os.getenv('AUTHORIZATION_CODE')
-    sender_name = "GithubActionNewsBot"
-    subject = "Hot News"
+    sender_name = "my_subscription"
+    subject = "github repo action email"
     filename = HOT_FILE
     message = MIMEMultipart()
     message['To'] = email.utils.formataddr((receiver_name, receiver_email))
