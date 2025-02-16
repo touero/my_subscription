@@ -31,5 +31,6 @@ jobs:
           RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
           RECEIVER_NAME: ${{ secrets.RECEIVER_NAME }}
           AUTHORIZATION_CODE: ${{ secrets.AUTHORIZATION_CODE }}
+          REPO_WATCHERS_TOKEN: ${{ secrets.REPO_WATCHERS_TOKEN }}
         run: |
           python main.py

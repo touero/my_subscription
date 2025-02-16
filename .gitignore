@@ -1,5 +1,5 @@
-venv
-.venv
+.idea/
+venv/
+.venv/
+__pycache__/
 hot.html
-__pycache__
-.idea
