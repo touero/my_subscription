@@ -66,7 +66,7 @@ def send_email(receiver):
         message.attach(MIMEText(html_content, 'html'))
         with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
             server.login(SENDER_EMAIL, AUTHORIZATION_CODE)
-            server.sendmail(SENDER_EMAIL, [receiver_email], 
+            server.sendmail(SENDER_EMAIL, [receiver_email],
                             msg=message.as_string())
             print(f"邮件已发送给 {receiver_name}")
     except SMTPException as e:
