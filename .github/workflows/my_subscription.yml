@@ -2,7 +2,7 @@ name: Get Data and Send Email
 
 on:
   schedule:
-    - cron: '0 9,14,17,20 * * *'
+    - cron: '0 1,6,9,12 * * *'
   workflow_dispatch:
 
 jobs:

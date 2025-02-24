@@ -6,6 +6,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 HOT_FILE = os.path.join(BASE_DIR, "hot.html")
 TEMPLATE = os.path.join(BASE_DIR, "template")
 TEMPLATE_HTML = os.path.join(TEMPLATE, "template.html")
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 \
+        (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+
+    "Referer": "https://tophub.today/"
+}
 
 
 @unique

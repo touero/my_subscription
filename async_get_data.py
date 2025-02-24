@@ -3,16 +3,14 @@ import aiohttp
 import aiofiles
 from lxml import html
 from datetime import datetime
+from pytz import timezone
 
-from constants import TEMPLATE_HTML, HOT_FILE, Url
+from constants import TEMPLATE_HTML, HOT_FILE, Url, HEADERS
+
 
 async def fetch_data(url, session):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
-        "Referer": "https://tophub.today/"
-    }
     try:
-        async with session.get(url, headers=headers) as response:
+        async with session.get(url, headers=HEADERS) as response:
             response.raise_for_status()
             response.encoding = 'utf-8'
             tree = html.fromstring(await response.text())
@@ -58,7 +56,9 @@ async def get_data():
 
         html_content = html_template.replace("{{table1_rows}}", table1_rows)
         html_content = html_content.replace("{{table2_rows}}", table2_rows)
-        create_datetime = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        shanghai_tz = timezone('Asia/shanghai')
+        shanghai_time = datetime.now(shanghai_tz)
+        create_datetime = shanghai_time.strftime('%Y-%m-%d %H:%M')
         html_content = html_content.replace("{{create_datetime}}", create_datetime)
 
         async with aiofiles.open(HOT_FILE, "w", encoding="utf-8") as file:
